@@ -354,14 +354,46 @@ namespace Polygons
 
         private bool IsInsideBorders(Point point)
         {
-            var testLine = new LineSegment(
+            var isInside = true;
+            
+            // Create rays to look in four directions
+            
+            var rays = new List<LineSegment>();
+
+            // Right
+            var right = new LineSegment(
                 point,
                 new Point(int.MaxValue, point.Y)
             );
 
-            var countIntersections = CountIntersections(testLine);
+            // Left
+            var left = new LineSegment(
+                point,
+                new Point(int.MinValue, point.Y)
+            );
 
-            return countIntersections % 2 > 0;
+            // Up
+            var up = new LineSegment(
+                point,
+                new Point(point.X, int.MaxValue)
+            );
+
+            // Down
+            var down = new LineSegment(
+                point,
+                new Point(point.X, int.MinValue)    
+            );
+
+            rays.Add(right);
+            rays.Add(left);
+            rays.Add(up);
+            rays.Add(down);
+
+            rays.ForEach(r => {
+                if(CountIntersections(r) % 2 == 0) isInside = false;
+            });
+
+            return isInside;
         }
 
         /// <summary>
